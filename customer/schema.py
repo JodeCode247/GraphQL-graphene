@@ -61,49 +61,28 @@ class Query(graphene.ObjectType):
 
 
 
+# Define the input for our mutation
+class CreateQuestionInput(graphene.InputObjectType):
+    text = graphene.String(required=True)
+    # You'd likely add more fields for options here in a full app
+
 # Define the mutation itself
 class CreateQuestion(graphene.Mutation):
-    q = graphene.Field(QuestionType)
     class Arguments:
-        text = graphene.String(required=True)
-    
+        input = CreateQuestionInput(required=True)
 
-    def mutate(root, info, text):
-        question = Questions(text=text)
+    # What the mutation returns
+    Output = QuestionType
+
+    # The logic to perform the mutation
+    def mutate(root, info, input):
+        question = Questions(text=input.text)
         question.save()
-        return CreateQuestion(q=question)
+        return question
 
 # Add the mutation to your main Mutation class
 class Mutation(graphene.ObjectType):
     create_question = CreateQuestion.Field()
 
-
-schema =graphene.Schema(query=Query,mutation=Mutation)
-
-
-
-# # Define the input for our mutation
-# class CreateQuestionInput(graphene.InputObjectType):
-#     text = graphene.String(required=True)
-#     # You'd likely add more fields for options here in a full app
-
-# # Define the mutation itself
-# class CreateQuestion(graphene.Mutation):
-#     class Arguments:
-#         input = CreateQuestionInput(required=True)
-
-#     # What the mutation returns
-#     Output = QuestionType
-
-#     # The logic to perform the mutation
-#     def mutate(root, info, input):
-#         question = Questions(text=input.text)
-#         question.save()
-#         return question
-
-# # Add the mutation to your main Mutation class
-# class Mutation(graphene.ObjectType):
-#     create_question = CreateQuestion.Field()
-
-# # Update your schema to include the mutation
-# schema = graphene.Schema(query=Query, mutation=Mutation)
+# Update your schema to include the mutation
+schema = graphene.Schema(query=Query, mutation=Mutation)
