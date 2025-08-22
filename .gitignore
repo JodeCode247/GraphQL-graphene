@@ -1,2 +1,4 @@
 /myenv
 db.sqlite3
+quiz.py
+/__pycache__
